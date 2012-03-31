@@ -1,0 +1,19 @@
+Mhashtable	hashtable.c	/^int main()$/
+add	htbl_priv.c	/^void add(htbl *hash, int val)$/
+bool	htbl.h	/^}bool;$/
+freeHash	htbl_priv.c	/^void freeHash(htbl *hash)$/
+get	htbl_priv.c	/^node* get(htbl *hash, int key)$/
+getOccupancy	htbl_priv.c	/^unsigned int getOccupancy(htbl *hash)$/
+hashfn	htbl_priv.c	/^static int hashfn(htbl *hash, int val)$/
+hinsert	htbl_priv.c	/^static void hinsert(node **head, int val)$/
+hremove	htbl_priv.c	/^static node* hremove(node **head)$/
+htbl	htbl.h	/^}htbl;$/
+initHash	hashtable.c	/^htbl* initHash(unsigned int size)$/
+isPresent	htbl_priv.c	/^bool isPresent(htbl *hash, int val)$/
+ll_append_link_node	llist.c	/^void ll_append_link_node(node **head, int data, no/
+ll_free_link_nodes	llist.c	/^void ll_free_link_nodes(node **head, int data, nod/
+ll_get_node	llist.c	/^node* ll_get_node(node **head, int data, node *don/
+ll_insert_node	llist.c	/^void ll_insert_node(node **head, int data, node *d/
+new	htbl_priv.c	/^node *new()$/
+node	htbl.h	/^}node;$/
+print_nodes	llist.c	/^void print_nodes(node **head, int data, node *dont/
