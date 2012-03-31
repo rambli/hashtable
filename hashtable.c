@@ -20,11 +20,12 @@ htbl* initHash(unsigned int size)
       newHash->freeHash = freeHash;
       newHash->add = add;
       newHash->isPresent = isPresent;
+      newHash->getOccupancy = getOccupancy;
+      //newHash->get = get;
+      /* Populate entries when they are added to */
       for(i = 0; i < size; i++)
       {
-         newHash->table[i] = new();
-         newHash->table[i]->data = i;
-         //printf("Added %p\n", (*table)[i]);
+         newHash->table[i] = NULL;
       }
    }
    return (newHash);
@@ -35,11 +36,31 @@ int main()
    htbl *hash;
    hash = initHash(13);
    int i = 0;
-   for(i = 0; i < 24; i++)
+   for(i = 0; i < 4; i++)
    {
    //   printf("Add %d\n", i+50);
-      hash->add(hash, i+50);//rand());
+      hash->add(hash, i);//rand());
+      hash->add(hash, i);//rand());
    }
+   printf("Occupancy is %d\n", hash->getOccupancy(hash));
+   
+#if 0
+   node *ret = hash->get(hash, 2);
+   printf("Got node %p\n", ret);
+   free(ret);
+
+   ret = hash->get(hash, 2);
+   printf("Got node %p\n", ret);
+   free(ret);
+   ret = hash->get(hash, 2);
+   printf("Occupancy is %d\n", hash->getOccupancy(hash));
+   printf("Got node %p\n", ret);
+   free(ret);
+   ret = hash->get(hash, 5);
+   printf("Got node %p\n", ret);
+   printf("Occupancy is %d\n", hash->getOccupancy(hash));
+   free(ret);
+#endif   
    /*
    for(i = 0; i < 500; i++)
    {

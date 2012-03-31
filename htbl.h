@@ -19,13 +19,17 @@ typedef struct htbl
    unsigned int size;
    void(*freeHash)(struct htbl *hash);
    void(*add)(struct htbl *hash, int val);
+   //node* (*get)(struct htbl *hash, int val);
    bool(*isPresent)(struct htbl *hash, int val);
+   unsigned int(*getOccupancy)(struct htbl *hash);
 }htbl;
 
 htbl* initHash(unsigned int size);
 node *new();
 void add(htbl *hash, int val);
+//node* get(htbl *hash, int val);
 bool isPresent(htbl *hash, int val);
 void freeHash(htbl *hash);
+unsigned int getOccupancy(htbl *hash);
 
 #endif
