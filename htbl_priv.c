@@ -12,6 +12,8 @@ static int hashfn(htbl *hash, int val)
 static void hinsert(node **head, int val)
 {
    node *prev = NULL;
+   append_link_node(head, val, head);
+#if 0 
    if(!head)
       return;
    if(!(*head))
@@ -38,6 +40,7 @@ static void hinsert(node **head, int val)
       if(NULL != prev)
          prev->link = tmp;
    }
+#endif 
 }
 #if 0
 static node* hremove(node **head)
@@ -100,7 +103,8 @@ unsigned int getOccupancy(htbl *hash)
 node *new()
 {
    node *n = (node*)malloc(sizeof(node));
-   n->link = NULL;
+   n->link[NEXT] = NULL;
+   n->link[PREV] = NULL;
    n->data = 0;
    //printf("new node %p\n", n);
    return n;
@@ -140,10 +144,10 @@ bool isPresent(htbl *hash, int val)
    {
       //printf("Current %d\n", head->data);
       if(head->data == val)
-         return true;
-      head = head->link;
+         return TRUE;
+      head = head->link[NEXT];
    }
-   return false;
+   return FALSE;
 }
 
 void freeHash(htbl *hash)
@@ -159,7 +163,7 @@ void freeHash(htbl *hash)
    {
       while(table[i])
       {
-         next = table[i]->link;
+         next = table[i]->link[NEXT];
          free(table[i]);
          table[i] = next;   
       }
