@@ -1,7 +1,7 @@
 #include "htbl.h"
 
 /* PRIVATE FUNCTIONS */
-static int hashfn(htbl *hash, int val)
+static unsigned int hashfn(htbl *hash, int val)
 {
    int hashIndex = 0;
    if(hash)
@@ -11,78 +11,14 @@ static int hashfn(htbl *hash, int val)
 
 static void hinsert(node **head, int val)
 {
-   node *prev = NULL;
-   append_link_node(head, val, head);
-#if 0 
-   if(!head)
-      return;
-   if(!(*head))
-   {
-      *head = new();
-      printf("Occupying new cell with %p\n", *head);
-      (*head)->data = val;
-      (*head)->link  = NULL;
-   }
-   else
-   {
-      /* This is a collision, traverse and add to the end */
-      node *tmp = *head;
-      while(NULL != tmp)
-      {
-         prev = tmp;
-         printf("%d->", tmp->data);
-         tmp = tmp->link;
-      }
-      tmp = new();
-      tmp->data = val;
-      printf("%d->", tmp->data);
-      printf("\n");
-      if(NULL != prev)
-         prev->link = tmp;
-   }
-#endif 
+   ll_append_link_node(head, val, *head);
 }
-#if 0
+
 static node* hremove(node **head)
 {
-   node *ret = NULL;
-   node *prev = NULL;
-
-   if(!head)
-      return;
-   
-   if(!(*head))
-   {
-      printf("Nothing to return\n");
-   }
-   else
-   {
-      if(!((*head)->link))
-      {
-         /* Removing first node, set it to NULL after getting the value */
-         ret = *head;
-         *head = NULL;
-      }
-      else
-      {
-         /* Traverse to the end and return the last one */
-         node *tmp = *head;
-         node *prev = tmp;
-         while(NULL != tmp)
-         {
-            ret = tmp;
-            tmp = tmp->link;
-         }
-         printf("Returning %d\n", ret->data);
-         if(prev)
-         /* We are returning this node, set the previous
-          * node's link ptr to NULL. Caller should free returned node.
-          */
-      }
-   }
-   return (ret);
+   return(ll_get_node(head, 0, NULL));
 }
-#endif
+
 unsigned int getOccupancy(htbl *hash)
 {
    int i = 0;
@@ -100,6 +36,20 @@ unsigned int getOccupancy(htbl *hash)
    return (count);
 }
 
+bool isOccupied(htbl *hash, int key)
+{
+   bool ret = FALSE;
+   node **table = NULL;
+   if(hash)
+   {
+      table = hash->table;
+      if(table)
+         if(table[hashfn(hash->size, key)])
+            ret = TRUE;
+   }
+   return (ret);
+}
+
 node *new()
 {
    node *n = (node*)malloc(sizeof(node));
@@ -115,24 +65,22 @@ void add(htbl *hash, int val)
    if(!hash)
       return;
    node **hashtable = hash->table;
-   printf("Adding to index %d\n", hashfn(hash, val));
+   //printf("Adding to index %d\n", hashfn(hash, val));
    if(hashtable)
       hinsert(&hashtable[hashfn(hash, val)], val);
 }
 
-#if 0
 node* get(htbl *hash, int key)
 {
    node *ret = NULL;
    if(!hash)
       return;
    node **table = hash->table;
-   printf("Retriving from index %d\n", hashfn(hash, key));
+   //printf("Retriving from index %d\n", hashfn(hash, key));
    if(table)
       ret = hremove(&table[hashfn(hash, key)]);
    return (ret);
 }
-#endif
 
 bool isPresent(htbl *hash, int val)
 {
@@ -142,7 +90,6 @@ bool isPresent(htbl *hash, int val)
    node *head = hashtable[hashfn(hash, val)];
    while(head)
    {
-      //printf("Current %d\n", head->data);
       if(head->data == val)
          return TRUE;
       head = head->link[NEXT];

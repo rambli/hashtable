@@ -19,9 +19,10 @@ htbl* initHash(unsigned int size)
       newHash->size = size;
       newHash->freeHash = freeHash;
       newHash->add = add;
+      newHash->get = get;
       newHash->isPresent = isPresent;
       newHash->getOccupancy = getOccupancy;
-      //newHash->get = get;
+      newHash->isOccupied = isOccupied;
       /* Populate entries when they are added to */
       for(i = 0; i < size; i++)
       {
@@ -38,28 +39,26 @@ int main()
    int i = 0;
    for(i = 0; i < 4; i++)
    {
-   //   printf("Add %d\n", i+50);
-      hash->add(hash, i);//rand());
-      hash->add(hash, i);//rand());
+      hash->add(hash, 2);//rand());
    }
    printf("Occupancy is %d\n", hash->getOccupancy(hash));
    
-#if 0
+#if 1
    node *ret = hash->get(hash, 2);
    printf("Got node %p\n", ret);
-   free(ret);
+   //free(ret);
 
    ret = hash->get(hash, 2);
    printf("Got node %p\n", ret);
-   free(ret);
+   //free(ret);
    ret = hash->get(hash, 2);
    printf("Occupancy is %d\n", hash->getOccupancy(hash));
    printf("Got node %p\n", ret);
-   free(ret);
+   //free(ret);
    ret = hash->get(hash, 5);
    printf("Got node %p\n", ret);
    printf("Occupancy is %d\n", hash->getOccupancy(hash));
-   free(ret);
+   //free(ret);
 #endif   
    /*
    for(i = 0; i < 500; i++)

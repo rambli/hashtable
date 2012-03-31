@@ -10,6 +10,7 @@
 /*! Macros for linked list nodes */
 #define NEXT	1
 #define PREV	0
+
 typedef enum
 {
    FALSE=0,
@@ -26,12 +27,6 @@ typedef struct node
 	/** Node data */
 	int data;
 }node;
-/*typedef struct node
-{
-   struct node *link;
-   int data;
-}node;
-*/
 
 typedef struct htbl
 {
@@ -39,17 +34,19 @@ typedef struct htbl
    unsigned int size;
    void(*freeHash)(struct htbl *hash);
    void(*add)(struct htbl *hash, int val);
-   //node* (*get)(struct htbl *hash, int val);
+   node* (*get)(struct htbl *hash, int val);
    bool(*isPresent)(struct htbl *hash, int val);
    unsigned int(*getOccupancy)(struct htbl *hash);
+   bool (*isOccupied)(struct htbl *hash, int key);
 }htbl;
 
 htbl* initHash(unsigned int size);
 node *new();
 void add(htbl *hash, int val);
-//node* get(htbl *hash, int val);
+node* get(htbl *hash, int val);
 bool isPresent(htbl *hash, int val);
 void freeHash(htbl *hash);
 unsigned int getOccupancy(htbl *hash);
+bool isOccupied(htbl *hash, int key);
 
 #endif

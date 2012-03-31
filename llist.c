@@ -5,11 +5,11 @@
 typedef void (*fnptr) (node **, int, node*);
 fnptr fn_arr[] = 
 {
-	insert_node,
-	append_link_node,
-	delete_node,
-	print_nodes,
-	free_link_nodes
+	ll_insert_node,
+	ll_append_link_node,
+	ll_delete_node,
+	ll_print_nodes,
+	ll_free_link_nodes
 };
 #endif
 /*******************************************************************
@@ -21,18 +21,19 @@ fnptr fn_arr[] =
 	\return void
 *******************************************************************/
 
-void append_link_node(node **head, int data, node *parent)
+void ll_append_link_node(node **head, int data, node *parent)
 {
 	if(NULL == *head)
 	{
 		*head = new();
-		(*head)->link[PREV] = parent;
+      //printf("Appending new node %p <next:%p prev:%p>\n", *head, NULL, parent);
+      (*head)->link[PREV] = parent;
 		(*head)->link[NEXT] = NULL;
 		(*head)->data = data;
 	}
 	else
 	{
-		append_link_node(&((*head)->link[NEXT]), data, *head);
+		ll_append_link_node(&((*head)->link[NEXT]), data, *head);
 	}
 }
 
@@ -44,7 +45,7 @@ void append_link_node(node **head, int data, node *parent)
 	\param parent - node parent
 	\return void
 *******************************************************************/
-void print_nodes(node **head, int data, node *dontcare)
+void ll_print_nodes(node **head, int data, node *dontcare)
 {
 	node *iter = *head;
 	while(iter != NULL)
@@ -63,7 +64,7 @@ void print_nodes(node **head, int data, node *dontcare)
 	\param parent - node parent
 	\return void
 *******************************************************************/
-void free_link_nodes(node **head, int data, node *dontcare)
+void ll_free_link_nodes(node **head, int data, node *dontcare)
 {
 	node *iter = *head;
 	node *mem;
@@ -83,7 +84,7 @@ void free_link_nodes(node **head, int data, node *dontcare)
 	\param parent - node parent
 	\return void
 *******************************************************************/
-void insert_node(node **head, int data, node *dontcare)
+void ll_insert_node(node **head, int data, node *dontcare)
 {
 	printf("Inserting data %d\n", data);
 	node *iter = *head;
@@ -93,7 +94,7 @@ void insert_node(node **head, int data, node *dontcare)
 	// the first node.
 	if(NULL == *head)
 	{
-		append_link_node(head, data, NULL);
+		ll_append_link_node(head, data, NULL);
 		return;
 	}
 
@@ -136,6 +137,53 @@ void insert_node(node **head, int data, node *dontcare)
 	}
 }
 
+
+/*******************************************************************
+	\fn get_node(node**, int, node*)
+	\brief - Remove and return node from the end of the list, user should free 
+            returned node
+	\param head - list head
+	\param data - Node data
+	\param parent - node parent
+	\return node * - returned node
+*******************************************************************/
+node* ll_get_node(node **head, int data, node *dontcare)
+{
+   node *ret =  NULL;
+   node *curr = NULL;
+
+	node *iter = *head;
+	if(NULL == iter)
+   {
+      //printf("List is NULL, nothing to return\n");
+		return ret;
+   }
+
+	// Traverse to the end of the list
+	while(iter)
+	{
+      curr = iter;
+		iter = iter->link[NEXT];
+	}
+   // Reached last node, return it
+   ret = curr;
+
+	if(NULL == curr->link[PREV])
+	{
+      //printf("This is the head node, setting it to NULL\n");
+      // If last node is head, set *head to NULL so caller knows about it
+      *head = NULL;
+	}
+	else
+	{
+      // Not the last node, set prev's next to NULL so curr is no longer accessible
+      // from current list. Caller should free curr
+		(curr->link[PREV])->link[NEXT] = NULL;
+		//printf("relaid out prev(%p)->next link to %p\n", curr->link[PREV],curr->link[PREV]->link[NEXT]);
+   }
+   return (ret);
+}
+
 /*******************************************************************
 	\fn delete_node(node**, int, node*)
 	\brief - Handling deleting node in between, at the start or end of the list
@@ -144,7 +192,7 @@ void insert_node(node **head, int data, node *dontcare)
 	\param parent - node parent
 	\return void
 *******************************************************************/
-void delete_node(node **head, int data, node *dontcare)
+void ll_delete_node(node **head, int data, node *dontcare)
 {
 	node *iter = *head;
 	if(NULL == iter)
