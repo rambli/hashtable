@@ -154,33 +154,33 @@ void ll_insert_node(node **head, void *data, node *dontcare)
 void ll_get_node(node **head, void *dntcare, node **ret)
 {
    node *curr = NULL;
-	node *iter = *head;
+   node *iter = *head;
 
-	if((NULL == iter) || (NULL == ret))
-		return;
+   if((NULL == iter) || (NULL == ret))
+      return;
 
-	// Traverse to the end of the list
+   // Traverse to the end of the list
 	while(iter)
 	{
       curr = iter;
-		iter = iter->link[NEXT];
-	}
+      iter = iter->link[NEXT];
+   }
    // Reached last node, return it
    *ret = curr->data;
 
-	if(NULL == curr->link[PREV])
-	{
+   if(NULL == curr->link[PREV])
+   {
       //printf("This is the head node, setting it to NULL\n");
       // If last node is head, set *head to NULL so caller knows about it
       free(*head);
       *head = NULL;
-	}
-	else
-	{
+   }
+   else
+   {
       // Not the last node, set prev's next to NULL so curr is no longer accessible
       // from current list. Free this node
       //printf("This is the end node, setting it to NULL\n");
-		(curr->link[PREV])->link[NEXT] = NULL;
+      (curr->link[PREV])->link[NEXT] = NULL;
       free(curr);
    }
 }
@@ -195,9 +195,9 @@ void ll_get_node(node **head, void *dntcare, node **ret)
 *******************************************************************/
 void ll_delete_node(node **head, int key, node *dontcare)
 {
-	node *iter = *head;
-	if(NULL == iter)
-		return;
+   node *iter = *head;
+   if(NULL == iter)
+      return;
 
 	// look for node
 	while(iter)
