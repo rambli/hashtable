@@ -1,7 +1,9 @@
+#include <stdio.h>
+#include<stdlib.h>
 //#include "heapsort.h"
 #include"htbl.h"
 
-#ifdef UNIT_TEST
+#ifdef LL_UNIT_TEST
 typedef void (*fnptr) (node **, int, node*);
 fnptr fn_arr[] = 
 {
@@ -21,10 +23,11 @@ fnptr fn_arr[] =
 	\return void
 *******************************************************************/
 
-void ll_append_link_node(node **head, int data, node *parent)
+void ll_append_link_node(node **head, void *data, node *parent)
 {
 	if(NULL == *head)
 	{
+      printf("ll adding data %p (parent is %p)\n", data, parent);
 		*head = new();
       //printf("Appending new node %p <next:%p prev:%p>\n", *head, NULL, parent);
       (*head)->link[PREV] = parent;
@@ -48,9 +51,11 @@ void ll_append_link_node(node **head, int data, node *parent)
 void ll_print_nodes(node **head, int data, node *dontcare)
 {
 	node *iter = *head;
-	while(iter != NULL)
+	int *val = NULL;
+   while(iter != NULL)
 	{
-		printf("%d->", iter->data);
+      val = (int*)iter->data;
+		printf("0x%x->", *val);
 		iter = iter->link[NEXT];
 	}
 	printf("\n");
@@ -84,9 +89,8 @@ void ll_free_link_nodes(node **head, int data, node *dontcare)
 	\param parent - node parent
 	\return void
 *******************************************************************/
-void ll_insert_node(node **head, int data, node *dontcare)
+void ll_insert_node(node **head, void *data, node *dontcare)
 {
-	printf("Inserting data %d\n", data);
 	node *iter = *head;
 	node *prev = NULL;
 
@@ -147,17 +151,13 @@ void ll_insert_node(node **head, int data, node *dontcare)
 	\param parent - node parent
 	\return node * - returned node
 *******************************************************************/
-node* ll_get_node(node **head, int data, node *dontcare)
+void ll_get_node(node **head, void *dntcare, node **ret)
 {
-   node *ret =  NULL;
    node *curr = NULL;
-
 	node *iter = *head;
-	if(NULL == iter)
-   {
-      //printf("List is NULL, nothing to return\n");
-		return ret;
-   }
+
+	if((NULL == iter) || (NULL == ret))
+		return;
 
 	// Traverse to the end of the list
 	while(iter)
@@ -166,22 +166,23 @@ node* ll_get_node(node **head, int data, node *dontcare)
 		iter = iter->link[NEXT];
 	}
    // Reached last node, return it
-   ret = curr;
+   *ret = curr->data;
 
 	if(NULL == curr->link[PREV])
 	{
       //printf("This is the head node, setting it to NULL\n");
       // If last node is head, set *head to NULL so caller knows about it
+      free(*head);
       *head = NULL;
 	}
 	else
 	{
       // Not the last node, set prev's next to NULL so curr is no longer accessible
-      // from current list. Caller should free curr
+      // from current list. Free this node
+      //printf("This is the end node, setting it to NULL\n");
 		(curr->link[PREV])->link[NEXT] = NULL;
-		//printf("relaid out prev(%p)->next link to %p\n", curr->link[PREV],curr->link[PREV]->link[NEXT]);
+      free(curr);
    }
-   return (ret);
 }
 
 /*******************************************************************
@@ -192,7 +193,7 @@ node* ll_get_node(node **head, int data, node *dontcare)
 	\param parent - node parent
 	\return void
 *******************************************************************/
-void ll_delete_node(node **head, int data, node *dontcare)
+void ll_delete_node(node **head, int key, node *dontcare)
 {
 	node *iter = *head;
 	if(NULL == iter)
@@ -201,7 +202,7 @@ void ll_delete_node(node **head, int data, node *dontcare)
 	// look for node
 	while(iter)
 	{
-		if(iter->data != data)
+		if(iter->key != key)
 			iter = iter->link[NEXT];
 		else
 			break;
@@ -215,7 +216,7 @@ void ll_delete_node(node **head, int data, node *dontcare)
 		*head = (*head)->link[NEXT];
 		(*head)->link[PREV] = NULL; //Since this is the new head, make prev=NULL
 		free(iter);
-		printf("Deleted %d, %d is now head\n", data, (*head)->data);
+		printf("Deleted %d, %d is now head\n", key, (*head)->key);
 		return;
 	}
 	else
@@ -226,12 +227,12 @@ void ll_delete_node(node **head, int data, node *dontcare)
 		{
 			(iter->link[NEXT])->link[PREV] = iter->link[PREV];
 		}
-		printf("free'ing node %d\n", data);
+		printf("free'ing node %d\n", key);
 		free(iter);
 	}
 }
 
-#ifdef UNIT_TEST
+#ifdef LL_UNIT_TEST
 int main()
 {
 	unsigned int opt = 0;

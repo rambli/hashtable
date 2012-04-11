@@ -1,10 +1,13 @@
+// Author: Rohan Ambli
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 
+#pragma pack(4)
+
 #ifndef _HTBL_H_
 #define _HTBL_H_
-
 #define NUM_LINKS 2
 
 /*! Macros for linked list nodes */
@@ -25,7 +28,8 @@ typedef struct node
 	/** When used as a node in a binary tree, parent of node x, one level up: [(x-1)/2] */
 	struct node *parent;
 	/** Node data */
-	int data;
+	int key;
+   void *data;
 }node;
 
 typedef struct htbl
@@ -33,18 +37,18 @@ typedef struct htbl
    node **table;
    unsigned int size;
    void(*freeHash)(struct htbl *hash);
-   void(*add)(struct htbl *hash, int val);
-   node* (*get)(struct htbl *hash, int val);
-   bool(*isPresent)(struct htbl *hash, int val);
+   void(*add)(struct htbl *hash, int key, void *data);
+   void* (*get)(struct htbl *hash, int key);
+   bool(*isPresent)(struct htbl *hash, int key);
    unsigned int(*getOccupancy)(struct htbl *hash);
    bool (*isOccupied)(struct htbl *hash, int key);
 }htbl;
 
 htbl* initHash(unsigned int size);
 node *new();
-void add(htbl *hash, int val);
-node* get(htbl *hash, int val);
-bool isPresent(htbl *hash, int val);
+void add(htbl *hash, int key, void *data);
+void* get(htbl *hash, int key);
+bool isPresent(htbl *hash, int key);
 void freeHash(htbl *hash);
 unsigned int getOccupancy(htbl *hash);
 bool isOccupied(htbl *hash, int key);

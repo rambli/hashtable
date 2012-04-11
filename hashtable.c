@@ -1,7 +1,12 @@
+// Author: Rohan Ambli
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include"htbl.h"
+#include<stdint.h>
+
+#define UNIT_TEST
 
 /* PUBLIC INTERFACE TO HASHTABLE */
 htbl* initHash(unsigned int size)
@@ -12,10 +17,11 @@ htbl* initHash(unsigned int size)
       return;
    size = (size > 10000)?10000:size;
 
-   newHash = (htbl*)malloc(sizeof(htbl));
+   newHash = (htbl*)calloc(1,sizeof(htbl));
    if(newHash)
    {
-      newHash->table = (node**)malloc(sizeof(node*) * size);
+      /* Populate entries when they are added to */
+      newHash->table = (node**)calloc(size, sizeof(node*));
       newHash->size = size;
       newHash->freeHash = freeHash;
       newHash->add = add;
@@ -23,53 +29,53 @@ htbl* initHash(unsigned int size)
       newHash->isPresent = isPresent;
       newHash->getOccupancy = getOccupancy;
       newHash->isOccupied = isOccupied;
-      /* Populate entries when they are added to */
-      for(i = 0; i < size; i++)
-      {
-         newHash->table[i] = NULL;
-      }
    }
    return (newHash);
 }
+
+#ifdef UNIT_TEST
+typedef struct _a
+{
+   int b;
+   int c;
+}st_a;
 
 int main()
 {
    htbl *hash;
    hash = initHash(13);
    int i = 0;
+   st_a *a1 = (st_a*)malloc(sizeof(st_a));
+   a1->b = 5;
+   a1->c = 32;
+
    for(i = 0; i < 4; i++)
    {
-      hash->add(hash, 2);//rand());
+      a1->c++;
+      hash->add(hash, i, (void*)a1);
    }
-   printf("Occupancy is %d\n", hash->getOccupancy(hash));
+   hash->add(hash, 0, (void*)a1);
+   hash->add(hash, 0, (void*)a1);
+   hash->add(hash, 0, (void*)a1);
+   hash->add(hash, 0, (void*)a1);
+   printf("Population done, occupancy is %d\n", hash->getOccupancy(hash));
    
-#if 1
-   node *ret = hash->get(hash, 2);
-   printf("Got node %p\n", ret);
-   //free(ret);
+   void *v_ret = NULL;
 
-   ret = hash->get(hash, 2);
-   printf("Got node %p\n", ret);
-   //free(ret);
-   ret = hash->get(hash, 2);
-   printf("Occupancy is %d\n", hash->getOccupancy(hash));
-   printf("Got node %p\n", ret);
-   //free(ret);
-   ret = hash->get(hash, 5);
-   printf("Got node %p\n", ret);
-   printf("Occupancy is %d\n", hash->getOccupancy(hash));
-   //free(ret);
-#endif   
-   /*
-   for(i = 0; i < 500; i++)
+   for(i = 0; i < 4; i++)
    {
-      int j = rand();
-      if(ispresent(hash, j))
-         printf("%d is present\n", j);
-//      else
-         //printf("%d is not present\n", j);
-   }*/
+      v_ret = hash->get(hash,i);
+      while(v_ret)
+      {
+         printf("Got data %d\n----\n", ((st_a*)v_ret)->c);
+         v_ret = hash->get(hash,i);
+      }
+      printf("Occupancy is %d\n", hash->getOccupancy(hash));
+   }
 
    hash->freeHash(hash);
+   hash = NULL;
+   free(a1);
    return 0;
 }
+#endif // UNIT_TEST

@@ -9,14 +9,16 @@ static unsigned int hashfn(htbl *hash, int val)
    return hashIndex;
 }
 
-static void hinsert(node **head, int val)
+static void hinsert(node **head, void *data)
 {
-   ll_append_link_node(head, val, *head);
+   ll_append_link_node(head, data, *head);
 }
 
-static node* hremove(node **head)
+void * hremove(node **head)
 {
-   return(ll_get_node(head, 0, NULL));
+   node *n = NULL;
+   ll_get_node(head, NULL, &n);
+   return(n);
 }
 
 unsigned int getOccupancy(htbl *hash)
@@ -44,7 +46,7 @@ bool isOccupied(htbl *hash, int key)
    {
       table = hash->table;
       if(table)
-         if(table[hashfn(hash->size, key)])
+         if(NULL != table[hashfn(hash, key)])
             ret = TRUE;
    }
    return (ret);
@@ -55,46 +57,44 @@ node *new()
    node *n = (node*)malloc(sizeof(node));
    n->link[NEXT] = NULL;
    n->link[PREV] = NULL;
-   n->data = 0;
-   //printf("new node %p\n", n);
-   return n;
+   n->key = 0;
+   n->data = NULL;
+   return (n);
 }
 
-void add(htbl *hash, int val)
+void add(htbl *hash, int key, void *data)
 {
    if(!hash)
       return;
    node **hashtable = hash->table;
-   //printf("Adding to index %d\n", hashfn(hash, val));
    if(hashtable)
-      hinsert(&hashtable[hashfn(hash, val)], val);
+      hinsert(&hashtable[hashfn(hash, key)], data);
 }
 
-node* get(htbl *hash, int key)
+void* get(htbl *hash, int key)
 {
-   node *ret = NULL;
+   void *ret = NULL;
    if(!hash)
       return;
    node **table = hash->table;
-   //printf("Retriving from index %d\n", hashfn(hash, key));
    if(table)
       ret = hremove(&table[hashfn(hash, key)]);
    return (ret);
 }
 
-bool isPresent(htbl *hash, int val)
+bool isPresent(htbl *hash, int key)
 {
    if(!hash)
       return;
    node **hashtable = hash->table;
-   node *head = hashtable[hashfn(hash, val)];
+   node *head = hashtable[hashfn(hash, key)];
    while(head)
    {
-      if(head->data == val)
+      if(head->key == key)
          return TRUE;
       head = head->link[NEXT];
    }
-   return FALSE;
+   return (FALSE);
 }
 
 void freeHash(htbl *hash)
@@ -112,10 +112,12 @@ void freeHash(htbl *hash)
       {
          next = table[i]->link[NEXT];
          free(table[i]);
+         table[i] = NULL;
          table[i] = next;   
       }
    }
    free(hash->table);
+   hash->table = NULL;
    free(hash);
    hash = NULL;
 }
