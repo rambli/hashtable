@@ -23,12 +23,14 @@ htbl* initHash(unsigned int size)
       /* Populate entries when they are added to */
       newHash->table = (node**)calloc(size, sizeof(node*));
       newHash->size = size;
+      newHash->allowColl = TRUE;
       newHash->freeHash = freeHash;
       newHash->add = add;
       newHash->get = get;
       newHash->isPresent = isPresent;
       newHash->getOccupancy = getOccupancy;
       newHash->isOccupied = isOccupied;
+      newHash->allowCollisions = setAllowCollisionValue;
    }
    return (newHash);
 }
@@ -44,6 +46,7 @@ int main()
 {
    htbl *hash;
    hash = initHash(13);
+   //hash->allowCollisions(hash, FALSE);
    int i = 0;
    st_a *a1 = (st_a*)malloc(sizeof(st_a));
    a1->b = 5;

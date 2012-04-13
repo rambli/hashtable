@@ -36,21 +36,23 @@ typedef struct htbl
 {
    node **table;
    unsigned int size;
+   bool allowColl;
    void(*freeHash)(struct htbl *hash);
-   void(*add)(struct htbl *hash, int key, void *data);
+   bool (*add)(struct htbl *hash, int key, void *data);
    void* (*get)(struct htbl *hash, int key);
    bool(*isPresent)(struct htbl *hash, int key);
    unsigned int(*getOccupancy)(struct htbl *hash);
    bool (*isOccupied)(struct htbl *hash, int key);
+   void (*allowCollisions)(struct htbl *hash, bool allow);
 }htbl;
 
 htbl* initHash(unsigned int size);
 node *new();
-void add(htbl *hash, int key, void *data);
+bool add(htbl *hash, int key, void *data);
 void* get(htbl *hash, int key);
 bool isPresent(htbl *hash, int key);
 void freeHash(htbl *hash);
 unsigned int getOccupancy(htbl *hash);
 bool isOccupied(htbl *hash, int key);
-
+void setAllowCollisionValue(htbl *hash, bool allow);
 #endif

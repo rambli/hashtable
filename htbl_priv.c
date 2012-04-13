@@ -40,14 +40,14 @@ unsigned int getOccupancy(htbl *hash)
 
 bool isOccupied(htbl *hash, int key)
 {
-   bool ret = FALSE;
+   bool ret = TRUE;
    node **table = NULL;
    if(hash)
    {
       table = hash->table;
       if(table)
-         if(NULL != table[hashfn(hash, key)])
-            ret = TRUE;
+         if(NULL == table[hashfn(hash, key)])
+            ret = FALSE;
    }
    return (ret);
 }
@@ -62,13 +62,22 @@ node *new()
    return (n);
 }
 
-void add(htbl *hash, int key, void *data)
+bool add(htbl *hash, int key, void *data)
 {
+   bool ret = TRUE;
    if(!hash)
       return;
    node **hashtable = hash->table;
    if(hashtable)
-      hinsert(&hashtable[hashfn(hash, key)], data);
+   {
+      /* Don't add if collisions are not allowed and slot is 
+       * already occupied */
+      if(!hash->allowColl && hash->isOccupied(hash, key))
+         ret = FALSE;
+      else
+         hinsert(&hashtable[hashfn(hash, key)], data);
+   }
+   return (ret);
 }
 
 void* get(htbl *hash, int key)
@@ -95,6 +104,13 @@ bool isPresent(htbl *hash, int key)
       head = head->link[NEXT];
    }
    return (FALSE);
+}
+
+void setAllowCollisionValue(htbl *hash, bool allow)
+{
+   if(!hash)
+      return;
+   hash->allowColl = allow;
 }
 
 void freeHash(htbl *hash)
